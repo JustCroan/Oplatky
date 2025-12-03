@@ -38,7 +38,7 @@ class MyClient(Client):
         cur_fuel = player.fuel
         turns: List[Turn] = []
 
-        self.log(f"My ships: {len(my_ships)}")
+        self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
         res=BuyShips(self,cur_rock,cur_fuel,cur_ships_types)
@@ -48,7 +48,7 @@ class MyClient(Client):
 
         turns+=OperateShips(self,my_ships,asteroids,ships,mothership)
 
-        
+
         return turns
 
 if __name__ == "__main__":
