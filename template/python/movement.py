@@ -1,9 +1,8 @@
 from proboj import *
 
-
 #Use to stay in range of target
 def Hover(ship: Ship, target: Asteroid | Ship):
-    return target.position.sub(ship.position).normalize()
+    return MoveTurn(ship.id,target.position.sub(ship.position).normalize())
     
 
 #Whether we can use faster movement
@@ -20,7 +19,7 @@ def Adjust(ship: Ship, target: Asteroid):
     if v*(v+1)/2 - 15 > d:
         return project.sub(ship.vector).normalize()
 '''
-def Adjust(ship: Ship, target: Asteroid):
+def Adjust(ship: Ship, target: Asteroid | Ship):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
     if v*(v+1)/2 - 15 > d:

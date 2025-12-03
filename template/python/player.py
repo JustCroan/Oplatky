@@ -28,23 +28,27 @@ class MyClient(Client):
     def turn(self) -> List[Turn]:
 
         player = self.get_my_player()
-        cur_ships = self.get_my_ships()
+        my_ships = self.get_my_ships()
         mothership = self.get_my_mothership()
         ships = self.game_map.ships
         asteroids = self.game_map.asteroids
-        my_ships=cur_ships[:]
+        cur_ships_types = [my_ships[i].type for i in range(len(my_ships))]
         round = self.game_map.round
         cur_rock = player.rock
         cur_fuel = player.fuel
         turns: List[Turn] = []
 
-        self.log(f"My ships: {my_ships}")
+        self.log(f"My ships: {len(my_ships)}")
+        CheckAssignments(self,ships)
 
-        res=BuyShips(self,cur_rock,cur_fuel,cur_ships)
+        res=BuyShips(self,cur_rock,cur_fuel,cur_ships_types)
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
 
+        turns+=OperateShips(self,my_ships,asteroids,ships,mothership)
+
+        
         return turns
 
 if __name__ == "__main__":
