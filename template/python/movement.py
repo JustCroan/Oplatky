@@ -1,0 +1,39 @@
+from proboj import *
+
+
+#Use to stay in range of target
+def Hover(ship: Ship, target: Asteroid | Ship):
+    return target.position.sub(ship.position).normalize()
+    
+
+#Whether we can use faster movement
+def Fast(ship: Ship):
+    return 1 + 2*(int(ship.type == ShipType.TANKER_SHIP or ship.type == ShipType.TRUCK_SHIP))
+
+#Flight adjuster for asteroid
+'''
+def Adjust(ship: Ship, target: Asteroid):
+    v = ship.vector.size()
+    dif = target.position.sub(ship.position)
+    d = ship.position.distance(target.position)
+    project = dif.normalize().scale((ship.position.x*dif.x + ship.position.y*dif.y)/d)
+    if v*(v+1)/2 - 15 > d:
+        return project.sub(ship.vector).normalize()
+'''
+def Adjust(ship: Ship, target: Asteroid):
+    v = ship.vector.size()
+    d = ship.position.distance(target.position)
+    if v*(v+1)/2 - 15 > d:
+        return ship.vector.normalize().scale(-1).scale(Fast(ship))
+    else:
+        return target.position.sub(ship.position).normalize().scale(Fast(ship))
+
+#Begin Movement to target with some target time    
+def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
+    dist = ship.position.distance(target.position)
+    dir = target.position.sub(ship.position).normalize()
+    k = max(1, (4*dist - time_target**2)/(2*time_target)-5)
+    return dir.scale(k)
+
+def Brake(ship: Ship):
+    return ship.position.scale(-1)
