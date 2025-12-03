@@ -22,7 +22,7 @@ def Adjust(ship: Ship, target: Asteroid):
 def Adjust(ship: Ship, target: Asteroid | Ship):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
-    if v*(v+1)/2 - 15 > d:
+    if v*(v+1)/2 - 5 > d:
         return ship.vector.normalize().scale(-1).scale(Fast(ship))
     else:
         return target.position.sub(ship.position).normalize().scale(Fast(ship))
