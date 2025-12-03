@@ -1,4 +1,6 @@
 #!/bin/python3
+import math
+from collections import defaultdict
 from typing import List
 from proboj import (
     Client,
@@ -15,25 +17,34 @@ from proboj import (
 
 from movement import *
 from eval import *
+from logistics import *
+
+# def dist(a : Position,b : Position):
+#     return math.sqrt((a.x-b.x)**2+(a.y-b.y)**2) 
 
 class MyClient(Client):
+    assignedto = defaultdict(lambda : None)
+    task = defaultdict(lambda : None)
     def turn(self) -> List[Turn]:
 
         player = self.get_my_player()
-        my_ships = self.get_my_ships()
-        self.log(f"My ships: {my_ships}")
-        turns: List[Turn] = []
+        cur_ships = self.get_my_ships()
+        mothership = self.get_my_mothership()
+        ships = self.game_map.ships
+        asteroids = self.game_map.asteroids
+        my_ships=cur_ships[:]
         round = self.game_map.round
         cur_rock = player.rock
         cur_fuel = player.fuel
-        while(True):
-            ship_to_buy = ShipToBuy(self,cur_rock,cur_fuel)
-            if(ship_to_buy is None): break 
-            turns.append(BuyTurn(ship_to_buy))
-            self.log(f"Buying {ship_to_buy}")
-            my_ships.append(ship_to_buy)
-            cur_rock-=250
-            cur_fuel-=100
+        turns: List[Turn] = []
+
+        self.log(f"My ships: {my_ships}")
+
+        res=BuyShips(self,cur_rock,cur_fuel,cur_ships)
+        turns+=res[0]
+        cur_rock=res[1]
+        cur_fuel=res[2]
+
         return turns
 
 if __name__ == "__main__":
