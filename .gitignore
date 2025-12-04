@@ -1,0 +1,8 @@
+.DS_Store
+template/.DS_Store
+template/observer/*
+template/runner_mac
+template/runner_windows.exe
+template/config.json
+template/game/*
+template/games.json
