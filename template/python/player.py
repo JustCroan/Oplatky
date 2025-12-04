@@ -39,7 +39,7 @@ class MyClient(Client):
         cur_fuel = player.fuel
         turns: List[Turn] = []
 
-        self.log(f"My ships: {(my_ships)}")
+        #self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
         if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)

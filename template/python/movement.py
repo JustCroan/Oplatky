@@ -30,16 +30,16 @@ def Adjust(ship: Ship, target: Asteroid | Ship):
     else:
         return target.position.sub(ship.position).normalize().scale(a)
     
-def Adjust2(ship: Ship, target: Asteroid | Ship, fuelplan=1):
+def Adjust2(ship: Ship, target: Asteroid | Ship | Position, fuelplan=1):
+    goalpos = target
+    if(not isinstance(target, Position)): goalpos=target.position
     v = ship.vector.size()
-    d = ship.position.distance(target.position)
+    d = ship.position.distance(goalpos)
     a = Fast(ship)
     if (v-fuelplan)/a*(v+fuelplan)/2 > d:
-        return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v-1))
+        return ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1))
     else:
-        return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v+1))
-    
-
+        return ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1))
     
 def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
     ve = ship.vector
@@ -64,9 +64,11 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
         return v_dot.sub(ve).normalize().scale(Fast(ship))
 
 #Begin Movement to target with some target time    
-def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
-    dist = ship.position.distance(target.position)
-    dir = target.position.sub(ship.position).normalize()
+def Begin_Route(ship: Ship, target: Asteroid | Ship | Position, time_target: int):
+    goalpos = target
+    if(not isinstance(target, Position)): goalpos=target.position
+    dist = ship.position.distance(goalpos)
+    dir = goalpos.sub(ship.position).normalize()
     k = max(1, (4*dist - time_target**2)/(2*time_target)-5)
     return dir.scale(k)
 
