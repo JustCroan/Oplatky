@@ -5,7 +5,12 @@ from math import sqrt
 #Use to stay in range of target
 def Hover(ship: Ship, target: Asteroid | Ship):
     return MoveTurn(ship.id,target.position.sub(ship.position).normalize())
-    
+
+def Is_overshooting(ship: Ship, target: Asteroid | Ship | Position):
+    goalpos: Position
+    if(not isinstance(target, Position)): goalpos=target.position
+    else: goalpos = target
+    return goalpos.distance(ship.position) < ship.vector.size()
 
 #Whether we can use faster movement
 def Fast(ship: Ship):
@@ -42,10 +47,14 @@ def Adjust2(ship: Ship, target: Asteroid | Ship | Position, fuelplan=1):
     v = ship.vector.size()
     d = ship.position.distance(goalpos)
     a = Fast(ship)
-    if (v-fuelplan)/a*(v+fuelplan)/2 > d:
-        return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1)))
+    if not Is_overshooting(ship, target):
+        if (v-fuelplan)/a*(v+fuelplan)/2 > d:
+            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1)))
+        else:
+            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1)))
     else:
-        return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1)))
+        return Normalize_Fuel(ship, target.sub(ship.position).sub(ship.vector))
+
     
 def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
     ve = ship.vector
@@ -95,12 +104,6 @@ def DecideMove(self,ship,goal):
         return (MoveTurn(ship.id,Begin_Fuel_Route(ship,goal,self.fuelplan[ship.id])))
     else: 
         return (MoveTurn(ship.id,Adjust2(ship,goal,self.fuelplan[ship.id])))
-
-def Is_overshooting(ship: Ship, target: Asteroid | Ship | Position):
-    goalpos: Position
-    if(not isinstance(target, Position)): goalpos=target.position
-    else: goalpos = target
-    return goalpos.distance(ship.position) < ship.vector.size()
 
 def Path_Offset(ship: Ship, target: Asteroid | Ship | Position):
     goalpos: Position
