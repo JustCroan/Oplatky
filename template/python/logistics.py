@@ -2,6 +2,7 @@ from proboj import *
 from movement import *
 from eval import *
 from collections import defaultdict
+from battle_tacticts import *
 def BuyShips(self,cur_rock,cur_fuel,cur_ships_types):
     turns = []
     while(True):
@@ -181,7 +182,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership):
                     if(not ch):
                         turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
         elif(ship.type == ShipType.MOTHER_SHIP):
-            pass
+            turns.append(Constant_Centralize(ship, 2))
     return turns
 def OperateShips(self,my_ships,asteroids,ships,mothership):
     presun = defaultdict(lambda:0)
