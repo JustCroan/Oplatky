@@ -30,11 +30,11 @@ def Adjust(ship: Ship, target: Asteroid | Ship):
     else:
         return target.position.sub(ship.position).normalize().scale(a)
     
-def Adjust2(ship: Ship, target: Asteroid | Ship):
+def Adjust2(ship: Ship, target: Asteroid | Ship, fuelplan=1):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
     a = Fast(ship)
-    if v/a*(v+1)/2 + 5> d:
+    if (v-fuelplan)/a*(v+fuelplan)/2 > d:
         return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v-1))
     else:
         return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v+1))
@@ -74,7 +74,14 @@ def Begin_Fuel_Route(ship: Ship, target: Asteroid | Ship, fuel_target: float):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
     a = Fast(ship)
-    return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target/2))
+    return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target))
 
 def Brake(ship: Ship):
     return ship.vector.scale(-1)
+
+def DecideMove(self,ship,goal):
+    if(self.speedup[ship.id]): 
+        self.speedup[ship.id]=False
+        return (MoveTurn(ship.id,Begin_Fuel_Route(ship,goal,self.fuelplan[ship.id])))
+    else: 
+        return (MoveTurn(ship.id,Adjust2(ship,goal,self.fuelplan[ship.id])))

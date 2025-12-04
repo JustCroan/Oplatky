@@ -24,6 +24,8 @@ class MyClient(Client):
     task = defaultdict(lambda : None)
     job = defaultdict(lambda : None)
     takenby = defaultdict(lambda : None)
+    speedup = defaultdict(lambda : False)
+    fuelplan = defaultdict(lambda : None)
     def turn(self) -> List[Turn]:
 
         player = self.get_my_player()
@@ -40,12 +42,16 @@ class MyClient(Client):
         self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
-        res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
+        if (round<1000): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
+        else: res=BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types)
+        
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
 
         turns+=OperateShips2(self,my_ships,asteroids,ships,mothership)
+
+
 
         self.log(turns)
         turns.append(MoveTurn(mothership.id,mothership.vector))
