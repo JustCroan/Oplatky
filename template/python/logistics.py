@@ -83,6 +83,9 @@ def Assign2(self,ship,asteroids,siphoningfuel):
         best = None
         for asteroid in asteroids:
             if(asteroid is None): continue
+            try: 
+                if 0.02 >= Dot_Product(asteroid.position.sub(self.game_map.get_my_mothership().position), self.game_map.get_my_mothership().sub(self.premothership)): continue
+            except: pass
             if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
                 if ship.position.distance(asteroid.position)<bestdist:
                     bestdist = ship.position.distance(asteroid.position)
@@ -147,7 +150,12 @@ def AssignMothership(self,mothership,asteroids,my_ships):
     self.speedup[mothership.id] = True
     return best
 
+Mothership_Movement = [500,750,1000,1200,1500,1800]
+Mothership_Movement_Precal = [i-150 for i in Mothership_Movement]
+index = 0
+
 def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
+    global index
     turns = []
     fuelintake = 100
     fuelintake = int(max(mothership.fuel//(2*(len(my_ships))),fuelintake))
@@ -243,16 +251,17 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                         turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
         elif(ship.type == ShipType.MOTHER_SHIP):
             self.log(f"rounder {self.game_map.round}")
-            if(self.game_map.round in [500,750,1000,1200,1500,1800]):
+            if(self.game_map.round in Mothership_Movement_Precal):
                 self.log(f"assignujem mothershipke {AssignMothership(self,mothership,asteroids,my_ships)}")
             if self.job[ship.id] is not None:
-                if(not self.mothershipinuse):
+                if(not self.mothershipinuse) and self.game_map.round >= Mothership_Movement[index]:
                     if(ship.position.distance(self.job[ship.id])<max(50,mothership.vector.size()+10)):
                         turns.append(MoveTurn(ship.id,Brake(ship)))
                         self.job[ship.id]=None
                     else:
                         turns.append(DecideMove(self,mothership,self.job[ship.id]))
                     self.mothershipinuse=True
+                    index += 1
     return turns
 def OperateShips(self,my_ships,asteroids,ships,mothership):
     presun = defaultdict(lambda:0)
