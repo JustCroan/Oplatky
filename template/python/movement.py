@@ -109,8 +109,9 @@ def Path_Offset(ship: Ship, target: Asteroid | Ship | Position):
     goalpos: Position
     if(not isinstance(target, Position)): goalpos=target.position
     else: goalpos = target
-    return Dot_Product(goalpos.sub(ship.position), ship.vector)
+    try: return Dot_Product_Normalized(goalpos.sub(ship.position), ship.vector)
+    except: return 0
 
-def Is_shoot_capable(ship: Ship, targer: Asteroid | Ship | Position):
-    pass
+def Is_shoot_capable(ship: Ship, target: Asteroid | Ship | Position):
+    if Path_Offset(ship, target)
 

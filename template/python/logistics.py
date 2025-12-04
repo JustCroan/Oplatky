@@ -239,6 +239,12 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                             turns.append(ShootTurn(ship.id,othership.id))
                             ch = 1
                             break
+                    if (not ch):
+                        for othership in ships:
+                            if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
+                                turns.append(ShootTurn(ship.id,othership.id))
+                                ch = 1
+                                break
                     if(not ch):
                         turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
         elif(ship.type == ShipType.MOTHER_SHIP):
