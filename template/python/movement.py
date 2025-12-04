@@ -11,6 +11,12 @@ def Hover(ship: Ship, target: Asteroid | Ship):
 def Fast(ship: Ship):
     return 1 + 2*(int(ship.type == ShipType.TANKER_SHIP or ship.type == ShipType.TRUCK_SHIP))
 
+def Normalize_Fuel(ship: Ship, vector: Position):
+    if ship.fuel >= vector.size() - Fast(ship):
+        return vector
+    else:
+        return vector.normalize().scale(max(0, ship.fuel - Fast(ship) - 0,1))
+
 #Flight adjuster for asteroid
 '''
 def Adjust(ship: Ship, target: Asteroid):
@@ -37,9 +43,9 @@ def Adjust2(ship: Ship, target: Asteroid | Ship | Position, fuelplan=1):
     d = ship.position.distance(goalpos)
     a = Fast(ship)
     if (v-fuelplan)/a*(v+fuelplan)/2 > d:
-        return ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1))
+        return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1)))
     else:
-        return ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1))
+        return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1)))
     
 def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
     ve = ship.vector
@@ -76,7 +82,7 @@ def Begin_Fuel_Route(ship: Ship, target: Asteroid | Ship, fuel_target: float):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
     a = Fast(ship)
-    return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target))
+    return Normalize_Fuel(ship, ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target)))
 
 def Brake(ship: Ship):
     return ship.vector.scale(-1)

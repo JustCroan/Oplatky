@@ -13,12 +13,21 @@ def Reflect_Vector(reflector: Position, vector: Position):
 
 class Matrix:
     def __init__(self, x1: float, x2: float, y1: float, y2: float) -> None:
-        self.matrix: list[Position] = [Position(x1, x2), Position(y1, y2)]
+        self.matrix: list[list[float]] = [[x1, x2], [y1, y2]]
+        self.col1 = Position(x1, y1)
+        self.col2 = Position(x2, y2)
+        self.row1 = Position(x1, x2)
+        self.row2 = Position(y1, y2)
 
     def Matrix_Vector(self, vector: Position) -> Position:
-        return Position(Dot_Product(vector, self.matrix[0]), Dot_Product(vector, self.matrix[1]))
+        return Position(Dot_Product(vector, self.row1), Dot_Product(vector, self.row2))
     
-    def Matrix_Scalar(self, num: float):
-        return Matrix(self.matrix[0].x*num, self.matrix[0].y*num, self.matrix[1].x*num, self.matrix[1].y*num)
+    
+def Matrix_Scalar(self, num: float) -> Matrix:
+    return Matrix(self.matrix[0][0]*num, self.matrix[0][1]*num, self.matrix[1][0]*num, self.matrix[1][1]*num)
 
-
+def Transpose(matrix: Matrix) -> Matrix:
+    return Matrix(matrix.matrix[0][0], matrix.matrix[1][0], matrix.matrix[0][1], matrix.matrix[1][1])
+    
+def Matrix_Mult(matrix1: Matrix, matrix2: Matrix) -> Matrix:
+    return Matrix(Dot_Product(matrix1.row1, matrix2.col1), Dot_Product(matrix1.row1, matrix2.col2), Dot_Product(matrix1.row2, matrix2.col1), Dot_Product(matrix1.row2, matrix2.col2))
