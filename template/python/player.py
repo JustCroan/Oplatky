@@ -20,14 +20,19 @@ from eval import *
 from logistics import *
 
 class MyClient(Client):
+    r=8
+    posun = 0
+    battleshipstobuy = 0
     assignedto = defaultdict(lambda : None)
     task = defaultdict(lambda : None)
     job = defaultdict(lambda : None)
     takenby = defaultdict(lambda : None)
+    halftaken = defaultdict(lambda: None)
     speedup = defaultdict(lambda : False)
     fuelplan = defaultdict(lambda : None)
     mothershipinuse = False
     premothership = Position(0,0)
+    shiplife = defaultdict(lambda : 0)
     def turn(self) -> List[Turn]:
 
         self.mothershipinuse = False
@@ -45,12 +50,16 @@ class MyClient(Client):
         siphoningfuel = defaultdict(lambda:0)
         
 
+        if round in [250,510,760,1010,1510]:
+            self.battleshipstobuy+=1
+        for ship in ships:
+            self.shiplife[ship.id]+=1
         #self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
         #if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
-        executeorder66 = 800
-        res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types,executeorder66)
+        executeorder66 = 1650-self.posun
+        res=BuyShips3(self,cur_rock,cur_fuel,cur_ships_types,executeorder66)
 
         turns+=res[0]
         cur_rock=res[1]
@@ -60,7 +69,7 @@ class MyClient(Client):
 
 
 
-        self.log(turns)
+        #self.log(turns)
         return turns    
 
 if __name__ == "__main__":

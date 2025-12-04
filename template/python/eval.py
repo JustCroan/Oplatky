@@ -16,10 +16,28 @@ def ShipToBuy2(self,rock,fuel,cur_ships_types,executeorder66):
     player = self.get_my_player()
     if(rock < 250 or fuel < 100):
         return None
+    if(self.battleshipstobuy):
+        self.battleshiptobuy-=1
+        return ShipType.BATTLE_SHIP
     amts = [0,0,0,0,0,0]
     for type in cur_ships_types:
         amts[type.value]+=1
     if(amts[ShipType.BATTLE_SHIP.value]<sum(amts)//k): return ShipType.BATTLE_SHIP
+    if(amts[ShipType.DRILL_SHIP.value] == min(amts[1:3])): return ShipType.DRILL_SHIP
+    if(amts[ShipType.SUCKER_SHIP.value] == min(amts[1:3])): return ShipType.SUCKER_SHIP
+
+def ShipToBuy3(self,rock,fuel,cur_ships_types,executeorder66):
+    k=executeorder66/(self.game_map.round+1)
+    player = self.get_my_player()
+    if(rock < 250 or fuel < 100):
+        return None
+    if(self.battleshipstobuy):
+        self.battleshipstobuy-=1
+        return ShipType.BATTLE_SHIP
+    amts = [0,0,0,0,0,0]
+    for type in cur_ships_types:
+        amts[type.value]+=1
+    if(amts[ShipType.TRUCK_SHIP.value]<sum(amts)//k): return ShipType.TRUCK_SHIP
     if(amts[ShipType.DRILL_SHIP.value] == min(amts[1:3])): return ShipType.DRILL_SHIP
     if(amts[ShipType.SUCKER_SHIP.value] == min(amts[1:3])): return ShipType.SUCKER_SHIP
 

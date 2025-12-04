@@ -113,5 +113,6 @@ def Path_Offset(ship: Ship, target: Asteroid | Ship | Position):
     except: return 0
 
 def Is_shoot_capable(ship: Ship, target: Asteroid | Ship | Position):
-    if Path_Offset(ship, target)
+    if Path_Offset(ship, target):
+        pass
 

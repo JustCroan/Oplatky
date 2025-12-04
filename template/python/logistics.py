@@ -28,6 +28,18 @@ def BuyShips2(self,cur_rock,cur_fuel,cur_ships_types,executeorder66):
         cur_fuel-=100
     return [turns,cur_rock,cur_fuel]
 
+def BuyShips3(self,cur_rock,cur_fuel,cur_ships_types,executeorder66):
+    turns = []
+    while(True):
+        ship_to_buy = ShipToBuy3(self,cur_rock,cur_fuel,cur_ships_types,executeorder66)
+        if(ship_to_buy is None): break 
+        turns.append(BuyTurn(ship_to_buy))
+        self.log(f"Buying {ship_to_buy}")
+        cur_ships_types.append(ship_to_buy)
+        cur_rock-=250
+        cur_fuel-=100
+    return [turns,cur_rock,cur_fuel]
+
 def BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types):
     turns = []
     while(True):
@@ -83,13 +95,13 @@ def Assign2(self,ship,asteroids,siphoningfuel):
         best = None
         for asteroid in asteroids:
             if(asteroid is None): continue
-            if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
+            if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None and self.halftaken[asteroid.id] is None and asteroid.owner_id != self.my_player_id and asteroid.size > self.r):
                 if ship.position.distance(asteroid.position)<bestdist:
                     bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
         if(best is not None):
             self.job[ship.id]=best.id
-            self.takenby[best.id]=ship.id
+            self.halftaken[best.id]=ship.id
             self.fuelplan[ship.id]=min(min((ship.fuel+sfswitch*siphoningfuel[ship.id])/5,bestdist/5),fuelcap)
             self.speedup[ship.id]=True
             return best.id
@@ -98,13 +110,13 @@ def Assign2(self,ship,asteroids,siphoningfuel):
         best = None
         for asteroid in asteroids:
             if(asteroid is None): continue
-            if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
+            if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None and self.halftaken[asteroid.id] is None and asteroid.owner_id != self.my_player_id and asteroid.size>self.r):
                 if ship.position.distance(asteroid.position)<bestdist:
                     bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
         if(best is not None):
             self.job[ship.id]=best.id
-            self.takenby[best.id]=ship.id
+            self.halftaken[best.id]=ship.id
             self.fuelplan[ship.id]=min(min((ship.fuel+sfswitch*siphoningfuel[ship.id])/5,bestdist/5),fuelcap)
             self.speedup[ship.id]=True
             return best.id
@@ -120,7 +132,22 @@ def Assign2(self,ship,asteroids,siphoningfuel):
         if(best is not None):
             self.job[ship.id]=best.id
             self.takenby[best.id]=ship.id
-            self.fuelplan[ship.id]=min(min((ship.fuel+sfswitch*siphoningfuel[ship.id])/20,bestdist/5),fuelcap)
+            #self.flueplan[]
+            self.speedup[ship.id]=True
+            return best.id
+    elif(ship.type == ShipType.TRUCK_SHIP):
+        bestdist = float('inf')
+        best = None
+        for asteroid in asteroids:
+            if(asteroid is None): continue
+            if(self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
+                if ship.position.distance(asteroid.position)<bestdist:
+                    bestdist = ship.position.distance(asteroid.position)
+                    best=asteroid
+        if(best is not None):
+            self.job[ship.id]=best.id
+            self.takenby[best.id]=ship.id
+            #self.flueplan[]
             self.speedup[ship.id]=True
             return best.id
     return None
@@ -159,7 +186,9 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                 Assign2(self,ship,asteroids,siphoningfuel)
                 turns.append(LoadTurn(ship.id,mothership.id,ship.rock))
             else:
-                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None):
+                try: self.log(asteroids[self.job[ship.id]].size)
+                except: pass
+                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None or asteroids[self.job[ship.id]].size<self.r):
                     if (self.job[ship.id]!=mothership.id): self.speedup[ship.id]=True
                     self.job[ship.id]=mothership.id
                     dist = ship.position.distance(mothership.position)
@@ -181,7 +210,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                         turns.append(MoveTurn(ship.id,Brake(ship)))
                     else:
                         goal = asteroids[self.job[ship.id]]
-                        if(ship.position.distance(goal.position)<50): 
+                        if(ship.position.distance(goal.position)<self.r): 
                             turns.append(MoveTurn(ship.id,Brake(ship)))
                         else:
                             turns.append(DecideMove(self,ship,goal))
@@ -192,7 +221,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
             if(self.job[ship.id] is None):
                 Assign2(self,ship,asteroids,siphoningfuel)
             else:
-                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None):
+                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None or asteroids[self.job[ship.id]].size<self.r):
                     if (self.job[ship.id]!=mothership.id): self.speedup[ship.id]=True
                     self.job[ship.id]=mothership.id
                     dist = ship.position.distance(mothership.position)
@@ -218,38 +247,97 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
 
 
         elif(ship.type == ShipType.BATTLE_SHIP):
+            if(self.game_map.round+self.posun < 2010):
+                ch=0
+                for othership in ships:
+                    if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500 and not othership.is_destroyed):
+                        turns.append(ShootTurn(ship.id,othership.id))
+                        ch = 1
+                        break
+                if(not ch):
+                    turns.append(MoveTurn(ship.id,Adjust2(ship,mothership)))
+            elif self.game_map.round+self.posun<1800:
+                for othership in ships:
+                    if((othership.player_id != self.my_player_id or othership.type!=ShipType.BATTLE_SHIP) and not othership.is_destroyed and ship.position.distance(othership.position)<300 and ship.position.distance(othership.position)>50):
+                        turns.append(ShootTurn(ship.id,othership.id))
+                        ch = 1
+                        break
+            else:
+                ch=0
+                for othership in ships:
+                    if((othership.player_id != self.my_player_id or othership.type!=ShipType.BATTLE_SHIP) and not othership.is_destroyedship.position.distance(othership.position)<300 and ship.position.distance(othership.position)>50):
+                        turns.append(ShootTurn(ship.id,othership.id))
+                        self.log(f"strielam na {ship.id}")
+                        ch = 1
+                        break
+                if(not ch):
+                    Assign2(self,ship,asteroids,siphoningfuel)
+                    if(self.job[ship.id] is not None): turns.append(MoveTurn(ship.id,Adjust2(ship,asteroids[self.job[ship.id]])))
+
+            # if(self.shiplife[ship.id]==2):
+            #     self.fuelplan[ship.id]=(ship.fuel//20)
+            # if(self.job[ship.id] is None or asteroids[self.job[ship.id]] is None or asteroids[self.job[ship.id]].owner_id == self.my_player_id):
+            #     if(self.shiplife[ship.id]==1):
+            #         if(not self.mothershipinuse):
+            #             SiphonTurn(mothership.id,ship.id,2*fuelintake)
+            #             self.mothershipinuse=True
+            #             Assign2(self,ship,asteroids,siphoningfuel)
+            #         else:
+            #             self.shiplife[ship.id]-=1
+            #     else:
+            #         Assign2(self,ship,asteroids,siphoningfuel)
+            # if(self.shiplife[ship.id]>1 and self.job[ship.id] is not None and asteroids[self.job[ship.id]] is not None):
+            #     goal = asteroids[self.job[ship.id]]
+            #     dist = ship.position.distance(goal.position)
+            #     if(dist < 50):
+            #         ch = 0
+            #         for othership in ships:
+            #             if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
+            #                 turns.append(ShootTurn(ship.id,othership.id))
+            #                 ch = 1
+            #                 break
+            #         if(not ch):
+            #             turns.append(MoveTurn(ship.id,Brake(ship)))
+            #     else:
+            #         ch = 0
+            #         for othership in ships:
+            #             if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500 and othership.type == ShipType.BATTLE_SHIP):
+            #                 turns.append(ShootTurn(ship.id,othership.id))
+            #                 ch = 1
+            #                 break
+            #         if (not ch):
+            #             for othership in ships:
+            #                 if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
+            #                     turns.append(ShootTurn(ship.id,othership.id))
+            #                     ch = 1
+            #                     break
+            #         if(not ch):
+            #             turns.append(DecideMove(self,ship,goal))
+
+        elif(ship.type == ShipType.TRUCK_SHIP):
+            if(self.shiplife[ship.id]==2):
+                self.fuelplan[ship.id]=(ship.fuel//20)
             if(self.job[ship.id] is None or asteroids[self.job[ship.id]] is None or asteroids[self.job[ship.id]].owner_id == self.my_player_id):
-                Assign2(self,ship,asteroids,siphoningfuel)
-            if(self.job[ship.id] is not None and asteroids[self.job[ship.id]] is not None):
+                if(self.shiplife[ship.id]==1):
+                    if(not self.mothershipinuse):
+                        SiphonTurn(mothership.id,ship.id,3*fuelintake)
+                        self.mothershipinuse=True
+                        Assign2(self,ship,asteroids,siphoningfuel)
+                    else:
+                        self.shiplife[ship.id]-=1
+                else:
+                    Assign2(self,ship,asteroids,siphoningfuel)
+            if(self.shiplife[ship.id]>1 and self.job[ship.id] is not None and asteroids[self.job[ship.id]] is not None):
                 goal = asteroids[self.job[ship.id]]
                 dist = ship.position.distance(goal.position)
                 if(dist < 50):
-                    ch = 0
-                    for othership in ships:
-                        if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
-                            turns.append(ShootTurn(ship.id,othership.id))
-                            ch = 1
-                            break
-                    if(not ch):
-                        turns.append(MoveTurn(ship.id,Brake(ship)))
+                    turns.append(MoveTurn(ship.id,Brake(ship)))
                 else:
-                    ch = 0
-                    for othership in ships:
-                        if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500 and othership.type == ShipType.BATTLE_SHIP):
-                            turns.append(ShootTurn(ship.id,othership.id))
-                            ch = 1
-                            break
-                    if (not ch):
-                        for othership in ships:
-                            if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
-                                turns.append(ShootTurn(ship.id,othership.id))
-                                ch = 1
-                                break
-                    if(not ch):
-                        turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
+                    turns.append(DecideMove(self,ship,goal))
+
         elif(ship.type == ShipType.MOTHER_SHIP):
             self.log(f"rounder {self.game_map.round}")
-            if(self.game_map.round in [500,1000,1500]):
+            if(self.game_map.round in [500,1000,1400]):
                 self.log(f"assignujem mothershipke {AssignMothership(self,mothership,asteroids,my_ships)}")
             if self.job[ship.id] is not None:
                 self.premothership=self.job[ship.id]
