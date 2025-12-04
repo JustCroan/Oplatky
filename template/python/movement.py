@@ -60,4 +60,4 @@ def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
     return dir.scale(k)
 
 def Brake(ship: Ship):
-    return ship.position.scale(-1)
+    return ship.vector.scale(-1)
