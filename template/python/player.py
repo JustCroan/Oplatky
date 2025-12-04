@@ -48,7 +48,7 @@ class MyClient(Client):
         turns+=OperateShips2(self,my_ships,asteroids,ships,mothership)
 
         self.log(turns)
-
+        turns.append(MoveTurn(mothership.id,mothership.vector))
         return turns    
 
 if __name__ == "__main__":
