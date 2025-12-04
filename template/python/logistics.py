@@ -26,6 +26,18 @@ def BuyShips2(self,cur_rock,cur_fuel,cur_ships_types):
         cur_fuel-=100
     return [turns,cur_rock,cur_fuel]
 
+def BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types):
+    turns = []
+    while(True):
+        ship_to_buy = ShipToBuyConquer(self,cur_rock,cur_fuel,cur_ships_types)
+        if(ship_to_buy is None): break 
+        turns.append(BuyTurn(ship_to_buy))
+        self.log(f"Buying {ship_to_buy}")
+        cur_ships_types.append(ship_to_buy)
+        cur_rock-=250
+        cur_fuel-=100
+    return [turns,cur_rock,cur_fuel]
+
 def Assign(self,ship,mothership,my_ships):
     if(ship.type == ShipType.TRUCK_SHIP):
             if(ship.rock>0):
@@ -67,7 +79,7 @@ def Assign2(self,ship,asteroids):
         best = None
         for asteroid in asteroids:
             if(asteroid is None): continue
-            if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None):
+            if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
                 if ship.position.distance(asteroid.position)<bestdist:
                     bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
@@ -80,7 +92,20 @@ def Assign2(self,ship,asteroids):
         best = None
         for asteroid in asteroids:
             if(asteroid is None): continue
-            if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None):
+            if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
+                if ship.position.distance(asteroid.position)<bestdist:
+                    bestdist = ship.position.distance(asteroid.position)
+                    best=asteroid
+        if(best is not None):
+            self.job[ship.id]=best.id
+            self.takenby[best.id]=ship.id
+            return best.id
+    elif(ship.type == ShipType.BATTLE_SHIP):
+        bestdist = float('inf')
+        best = None
+        for asteroid in asteroids:
+            if(asteroid is None): continue
+            if(self.takenby[asteroid.id] is None and asteroid.owner_id != self.my_player_id):
                 if ship.position.distance(asteroid.position)<bestdist:
                     bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
@@ -131,10 +156,30 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership):
                 else:
                     if(ship.position.distance(asteroids[self.job[ship.id]].position)<50): turns.append(MoveTurn(ship.id,Brake(ship)))
                     else: turns.append(MoveTurn(ship.id,Adjust2(ship,asteroids[self.job[ship.id]])))
-
-
         elif(ship.type == ShipType.BATTLE_SHIP):
-            pass
+            if(self.job[ship.id] is None or asteroids[self.job[ship.id]] is None or asteroids[self.job[ship.id]].owner_id == self.my_player_id):
+                Assign2(self,ship,asteroids)
+            if(self.job[ship.id] is not None and asteroids[self.job[ship.id]] is not None):
+                goal = asteroids[self.job[ship.id]]
+                dist = ship.position.distance(goal.position)
+                if(dist < 50):
+                    ch = 0
+                    for othership in ships:
+                        if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500):
+                            turns.append(ShootTurn(ship.id,othership.id))
+                            ch = 1
+                            break
+                    if(not ch):
+                        turns.append(MoveTurn(ship.id,Brake(ship)))
+                else:
+                    ch = 0
+                    for othership in ships:
+                        if(othership.player_id != self.my_player_id and ship.position.distance(othership.position)<500 and othership.type == ShipType.BATTLE_SHIP):
+                            turns.append(ShootTurn(ship.id,othership.id))
+                            ch = 1
+                            break
+                    if(not ch):
+                        turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
         elif(ship.type == ShipType.MOTHER_SHIP):
             pass
     return turns
