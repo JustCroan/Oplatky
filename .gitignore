@@ -3,6 +3,13 @@ template/.DS_Store
 template/observer/*
 template/runner_mac
 template/runner_windows.exe
+template/runner_linux
+template/server_mac
+template/server_windows.exe
+template/server_linux
 template/config.json
 template/game/*
 template/games.json
+template/python/__pycache__/*
+/template/python/__pycache__
+template/runner_mac
