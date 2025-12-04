@@ -22,6 +22,8 @@ from logistics import *
 class MyClient(Client):
     assignedto = defaultdict(lambda : None)
     task = defaultdict(lambda : None)
+    job = defaultdict(lambda : None)
+    takenby = defaultdict(lambda : None)
     def turn(self) -> List[Turn]:
 
         player = self.get_my_player()

@@ -74,10 +74,10 @@ def OperateShips(self,my_ships,asteroids,ships,mothership):
                         self.assignedto[self.task[ship.id]]=None
                         self.task[ship.id]=None
                         presun[goal.id]=1
-                elif dist<60 and ship.vector.size() > 3:
-                    turns.append(MoveTurn(ship.id,ship.vector.scale(-1)))
+                # elif dist<60 and ship.vector.size() > 3:
+                #     turns.append(MoveTurn(ship.id,ship.vector.scale(-1)))
                 else:
-                    turns.append(MoveTurn(ship.id,Adjust(ship,goal)))
+                    turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,goal)))
 
 
 
@@ -97,10 +97,10 @@ def OperateShips(self,my_ships,asteroids,ships,mothership):
                         self.assignedto[self.task[ship.id]]=None
                         self.task[ship.id]=None
                         presun[goal.id]=1
-                elif dist<60 and ship.vector.size() > 3:
-                    turns.append(MoveTurn(ship.id,ship.vector.scale(-1)))
+                # elif dist<60 and ship.vector.size() > 3:
+                #     turns.append(MoveTurn(ship.id,ship.vector.scale(-1)))
                 else:
-                    turns.append(MoveTurn(ship.id,Adjust(ship,goal)))
+                    turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,goal)))
 
 
 
@@ -122,7 +122,7 @@ def OperateShips(self,my_ships,asteroids,ships,mothership):
                     best = asteroid
             if(best is not None):
                 if(bestdist<50): turns.append(MoveTurn(ship.id,Brake(ship)))
-                else: turns.append(MoveTurn(ship.id,Adjust(ship,best)))
+                else: turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
 
 
 
@@ -138,7 +138,7 @@ def OperateShips(self,my_ships,asteroids,ships,mothership):
                     best = asteroid
             if(best is not None):
                 if(bestdist<50): self.log('brakae') ; turns.append(MoveTurn(ship.id,Brake(ship)))
-                turns.append(MoveTurn(ship.id,Adjust(ship,best)))
+                turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
                 pass
         elif(ship.type == ShipType.MOTHER_SHIP):
             pass
@@ -148,3 +148,4 @@ def CheckAssignments(self,ships):
         if(ships[key].is_destroyed):
             self.assigned[self.task[key]] = None
             self.task[key] = None
+
