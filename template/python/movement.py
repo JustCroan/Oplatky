@@ -40,18 +40,17 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
         koef1 = ( do*2 + sqrt( 4*(do**2) - 4*sds*sdt ) )/sdt
         koef2 = ( do*2 - sqrt( 4*(do**2) - 4*sds*sdt ) )/sdt
 
-        vects = sorted([dif.scale(koef1), dif.scale(koef2)], key= lambda x: x.size())
+        vects = sorted([dif.scale(koef1), dif.scale(koef2)], key= lambda x: Dot_Product(x, dif))
 
         v = ship.vector.size()
         d = ship.position.distance(target.position)
-        a = Fast(ship)
-        if v/a*(v+1)/2 > d:
+        if v*(v+1)/2 > d:
             return vects[0].sub(ve)
         else:
             return vects[1].sub(ve)
     except:
         v_dot = dif.normalize().scale(Dot_Product_Normalized(ve, dif)*ve.size())
-        return v_dot.sub(ve).normalize()
+        return v_dot.sub(ve).normalize().scale(Fast(ship))
 
 #Begin Movement to target with some target time    
 def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
