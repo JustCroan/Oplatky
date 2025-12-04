@@ -45,9 +45,9 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
         d = ship.position.distance(target.position)
         a = Fast(ship)
         if v/a*(v+1)/2 > d:
-            return vects[0]
+            return vects[0].sub(ve)
         else:
-            return vects[1]
+            return vects[1].sub(ve)
     except:
         v_dot = dif.normalize().scale(Dot_Product_Normalized(ve, dif)*ve.size())
         return v_dot.sub(ve).normalize()
