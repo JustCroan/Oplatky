@@ -1,4 +1,5 @@
 from proboj import *
+from utils import *
 
 #Use to stay in range of target
 def Hover(ship: Ship, target: Asteroid | Ship):
@@ -27,6 +28,34 @@ def Adjust(ship: Ship, target: Asteroid | Ship):
         return ship.vector.normalize().scale(-1).scale(a)
     else:
         return target.position.sub(ship.position).normalize().scale(a)
+    
+def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
+    ve = ship.vector
+    dif = target.position.sub(ship.position)
+    do = Dot_Product(ve, dif)
+    sds = Dot_Product(ve, ve) - Fast(ship)**2
+    sdt = Dot_Product(dif, dif)
+    try: 
+        koef1 = ( 2*do + ( sds**2 - 4*sds*sdt )**0.5 )/sdt
+        koef2 = ( 2*do - ( sds**2 - 4*sds*sdt )**0.5 )/sdt
+
+        vects = sorted([dif.normalize().scale(koef1), dif.normalize().scale(koef2)], key= lambda x: x.size())
+
+        v = ship.vector.size()
+        d = ship.position.distance(target.position)
+        a = Fast(ship)
+        if v/a*(v+1)/2 > d:
+            return vects[0]
+        else:
+            return vects[1]
+    except:
+        v = ship.vector.size()
+        d = ship.position.distance(target.position)
+        a = Fast(ship)
+        if v/a*(v+1)/2 > d:
+            return ship.vector.normalize().scale(-1).scale(a)
+        else:
+            return target.position.sub(ship.position).normalize().scale(a)
 
 #Begin Movement to target with some target time    
 def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):

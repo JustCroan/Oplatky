@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/bin/python3
 import math
 from collections import defaultdict
 from typing import List
