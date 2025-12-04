@@ -70,5 +70,11 @@ def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
     k = max(1, (4*dist - time_target**2)/(2*time_target)-5)
     return dir.scale(k)
 
+def Begin_Fuel_Route(ship: Ship, target: Asteroid | Ship, fuel_target: float):
+    v = ship.vector.size()
+    d = ship.position.distance(target.position)
+    a = Fast(ship)
+    return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target/2))
+
 def Brake(ship: Ship):
     return ship.vector.scale(-1)
