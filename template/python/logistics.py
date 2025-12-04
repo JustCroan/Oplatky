@@ -14,6 +14,18 @@ def BuyShips(self,cur_rock,cur_fuel,cur_ships_types):
         cur_fuel-=100
     return [turns,cur_rock,cur_fuel]
 
+def BuyShips2(self,cur_rock,cur_fuel,cur_ships_types):
+    turns = []
+    while(True):
+        ship_to_buy = ShipToBuy2(self,cur_rock,cur_fuel,cur_ships_types)
+        if(ship_to_buy is None): break 
+        turns.append(BuyTurn(ship_to_buy))
+        self.log(f"Buying {ship_to_buy}")
+        cur_ships_types.append(ship_to_buy)
+        cur_rock-=250
+        cur_fuel-=100
+    return [turns,cur_rock,cur_fuel]
+
 def Assign(self,ship,mothership,my_ships):
     if(ship.type == ShipType.TRUCK_SHIP):
             if(ship.rock>0):
@@ -49,6 +61,40 @@ def Assign(self,ship,mothership,my_ships):
                 return best.id
     return None
 
+def Assign2(self,ship,mothership,my_ships,asteroids):
+    if(ship.type == ShipType.DRILL_SHIP):
+            if(ship.rock>0):
+                self.job[ship.id]=mothership.id
+                return mothership.id
+            else:
+                bestdist = float('inf')
+                best = None
+                for asteroid in asteroids:
+                    if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None):
+                        if ship.position(asteroid.position)<bestdist:
+                            bestdist = ship.position(asteroid.position)
+                            best=asteroid
+                if(best is not None):
+                    self.task[ship.id]=best.id
+                    self.assignedto[best.id]=ship.id
+                    return best.id
+    elif(ship.type == ShipType.SUCKER_SHIP):
+        if(ship.fuel>0):
+            self.task[ship.id]=mothership.id
+            return mothership.id
+        else:
+            bestfuel = 0
+            best = None
+            for sucker in my_ships:
+                if(sucker.type==ShipType.SUCKER_SHIP and self.assignedto[sucker.id] is None):
+                    if sucker.fuel>bestfuel:
+                        bestfuel=sucker.fuel
+                        best=sucker
+            if(best is not None):
+                self.task[ship.id]=best.id
+                self.assignedto[best.id]=ship.id
+                return best.id
+    return None
 
 def OperateShips(self,my_ships,asteroids,ships,mothership):
     presun = defaultdict(lambda:0)
