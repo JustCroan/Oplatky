@@ -163,7 +163,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                     if (self.job[ship.id]!=mothership.id): self.speedup[ship.id]=True
                     self.job[ship.id]=mothership.id
                     dist = ship.position.distance(mothership.position)
-                    if(dist < 15 == mothership.position == self.premothership):
+                    if(dist < 15 and mothership.position.distance(self.premothership)<1):
                         if(ship.vector.size()>0.1 and ship.fuel>ship.vector.size()):
                             turns.append(MoveTurn(ship.id,Brake(ship)))
                         else:
@@ -196,7 +196,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                     if (self.job[ship.id]!=mothership.id): self.speedup[ship.id]=True
                     self.job[ship.id]=mothership.id
                     dist = ship.position.distance(mothership.position)
-                    if(dist < 15 and mothership.position == self.premothership):
+                    if(dist < 15 and mothership.position.distance(self.premothership)<1):
                         if(ship.vector.size()>0.1 and ship.fuel>ship.vector.size()):
                             turns.append(MoveTurn(ship.id,Brake(ship)))
                         else:
