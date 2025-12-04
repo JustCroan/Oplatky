@@ -22,10 +22,11 @@ def Adjust(ship: Ship, target: Asteroid):
 def Adjust(ship: Ship, target: Asteroid | Ship):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
-    if v*(v+1)/2 - 5 > d:
-        return ship.vector.normalize().scale(-1).scale(Fast(ship))
+    a = Fast(ship)
+    if v/a*(v+1)/2 > d:
+        return ship.vector.normalize().scale(-1).scale(a)
     else:
-        return target.position.sub(ship.position).normalize().scale(Fast(ship))
+        return target.position.sub(ship.position).normalize().scale(a)
 
 #Begin Movement to target with some target time    
 def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
