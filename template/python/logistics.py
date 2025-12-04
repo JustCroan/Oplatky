@@ -75,24 +75,24 @@ def Assign2(self,ship,mothership,my_ships,asteroids):
                             bestdist = ship.position(asteroid.position)
                             best=asteroid
                 if(best is not None):
-                    self.task[ship.id]=best.id
-                    self.assignedto[best.id]=ship.id
+                    self.job[ship.id]=best.id
+                    self.takenby[best.id]=ship.id
                     return best.id
     elif(ship.type == ShipType.SUCKER_SHIP):
-        if(ship.fuel>0):
-            self.task[ship.id]=mothership.id
+        if(ship.rock>0):
+            self.job[ship.id]=mothership.id
             return mothership.id
         else:
-            bestfuel = 0
+            bestdist = float('inf')
             best = None
-            for sucker in my_ships:
-                if(sucker.type==ShipType.SUCKER_SHIP and self.assignedto[sucker.id] is None):
-                    if sucker.fuel>bestfuel:
-                        bestfuel=sucker.fuel
-                        best=sucker
+            for asteroid in asteroids:
+                if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None):
+                    if ship.position(asteroid.position)<bestdist:
+                        bestdist = ship.position(asteroid.position)
+                        best=asteroid
             if(best is not None):
-                self.task[ship.id]=best.id
-                self.assignedto[best.id]=ship.id
+                self.job[ship.id]=best.id
+                self.takenby[best.id]=ship.id
                 return best.id
     return None
 
