@@ -93,3 +93,19 @@ def DecideMove(self,ship,goal):
         return (MoveTurn(ship.id,Begin_Fuel_Route(ship,goal,self.fuelplan[ship.id])))
     else: 
         return (MoveTurn(ship.id,Adjust2(ship,goal,self.fuelplan[ship.id])))
+
+def Is_overshooting(ship: Ship, target: Asteroid | Ship | Position):
+    goalpos: Position
+    if(not isinstance(target, Position)): goalpos=target.position
+    else: goalpos = target
+    return goalpos.distance(ship.position) < ship.vector.size()
+
+def Path_Offset(ship: Ship, target: Asteroid | Ship | Position):
+    goalpos: Position
+    if(not isinstance(target, Position)): goalpos=target.position
+    else: goalpos = target
+    return Dot_Product(goalpos.sub(ship.position), ship.vector)
+
+def Is_shoot_capable(ship: Ship, targer: Asteroid | Ship | Position):
+    pass
+
