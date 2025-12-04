@@ -36,8 +36,8 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
     sds = Dot_Product(ve, ve) - Fast(ship)**2
     sdt = Dot_Product(dif, dif)
     try: 
-        koef1 = ( 2*do + ( sds**2 - 4*sds*sdt )**0.5 )/sdt
-        koef2 = ( 2*do - ( sds**2 - 4*sds*sdt )**0.5 )/sdt
+        koef1 = ( do**2 + ( sds**2 - 4*sds*sdt )**0.5 )/sdt
+        koef2 = ( do**2 - ( sds**2 - 4*sds*sdt )**0.5 )/sdt
 
         vects = sorted([dif.scale(koef1), dif.scale(koef2)], key= lambda x: x.size())
 
