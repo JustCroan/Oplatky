@@ -27,14 +27,12 @@ class MyClient(Client):
     speedup = defaultdict(lambda : False)
     fuelplan = defaultdict(lambda : None)
     mothershipinuse = False
-    premothership = Position(0,0)
+    premothership = None
     def turn(self) -> List[Turn]:
-
         self.mothershipinuse = False
         player = self.get_my_player()
         my_ships = self.get_my_ships()
         mothership = self.get_my_mothership()
-        self.premothership = mothership.position
         ships = self.game_map.ships
         asteroids = self.game_map.asteroids
         cur_ships_types = [my_ships[i].type for i in range(len(my_ships))]
@@ -43,6 +41,9 @@ class MyClient(Client):
         cur_fuel = player.fuel
         turns: List[Turn] = []
         siphoningfuel = defaultdict(lambda:0)
+
+        if round == 0:
+            self.premothership = mothership.position
         
 
         #self.log(f"My ships: {(my_ships)}")
