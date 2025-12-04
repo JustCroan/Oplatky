@@ -24,10 +24,21 @@ def Adjust(ship: Ship, target: Asteroid | Ship):
     v = ship.vector.size()
     d = ship.position.distance(target.position)
     a = Fast(ship)
-    if v/a*(v+1)/2 > d:
-        return ship.vector.normalize().scale(-1).scale(a)
+    if v/a*(v+1)/2 + 10> d or ( v/a*(v+1)/2 > d and v < 2):
+        return ship.vector.normalize().scale(-1)
     else:
         return target.position.sub(ship.position).normalize().scale(a)
+    
+def Adjust2(ship: Ship, target: Asteroid | Ship):
+    v = ship.vector.size()
+    d = ship.position.distance(target.position)
+    a = Fast(ship)
+    if v/a*(v+1)/2 + 5> d:
+        return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v-1))
+    else:
+        return ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v+1))
+    
+
     
 def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
     ve = ship.vector

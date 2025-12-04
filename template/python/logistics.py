@@ -61,14 +61,15 @@ def Assign(self,ship,mothership,my_ships):
                 return best.id
     return None
 
-def Assign2(self,ship,mothership,my_ships,asteroids):
+def Assign2(self,ship,asteroids):
     if(ship.type == ShipType.DRILL_SHIP):
         bestdist = float('inf')
         best = None
         for asteroid in asteroids:
+            if(asteroid is None): continue
             if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None):
-                if ship.position(asteroid.position)<bestdist:
-                    bestdist = ship.position(asteroid.position)
+                if ship.position.distance(asteroid.position)<bestdist:
+                    bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
         if(best is not None):
             self.job[ship.id]=best.id
@@ -78,9 +79,10 @@ def Assign2(self,ship,mothership,my_ships,asteroids):
         bestdist = float('inf')
         best = None
         for asteroid in asteroids:
+            if(asteroid is None): continue
             if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None):
-                if ship.position(asteroid.position)<bestdist:
-                    bestdist = ship.position(asteroid.position)
+                if ship.position.distance(asteroid.position)<bestdist:
+                    bestdist = ship.position.distance(asteroid.position)
                     best=asteroid
         if(best is not None):
             self.job[ship.id]=best.id
@@ -90,39 +92,49 @@ def Assign2(self,ship,mothership,my_ships,asteroids):
 
 def OperateShips2(self,my_ships,asteroids,ships,mothership):
     turns = []
-
-
-
     for ship in my_ships:
+
+        
         if(ship.type == ShipType.DRILL_SHIP):
-            best = None
-            bestdist = float('inf')
-            for asteroid in asteroids:
-                if(asteroid is None): continue
-                dist = ship.position.distance(asteroid.position)
-                if(asteroid.type == AsteroidType.ROCK_ASTEROID and dist<bestdist):
-                    bestdist = dist
-                    best = asteroid
-            if(best is not None):
-                if(bestdist<50): turns.append(MoveTurn(ship.id,Brake(ship)))
-                else: turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
-
-
+            if(self.job[ship.id] is None):
+                turns.append(SiphonTurn(mothership.id,ship.id,min(mothership.fuel,50)))
+                Assign2(self,ship,asteroids)
+            else:
+                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None):
+                    self.job[ship.id]=mothership.id
+                    dist = ship.position.distance(mothership.position)
+                    self.log(f"loadujem {ship.id} potom {mothership.id} potom {ship.rock} potom {dist}")
+                    if(dist < 20):
+                        turns.append(LoadTurn(ship.id,mothership.id,ship.rock))
+                        self.job[ship.id]=None
+                    else:
+                        turns.append(MoveTurn(ship.id,Adjust2(ship,mothership)))
+                else:
+                    if(ship.position.distance(asteroids[self.job[ship.id]].position)<50): turns.append(MoveTurn(ship.id,Brake(ship)))
+                    else: turns.append(MoveTurn(ship.id,Adjust2(ship,asteroids[self.job[ship.id]])))
 
 
         elif(ship.type == ShipType.SUCKER_SHIP):
-            best = None
-            bestdist = float('inf')
-            for asteroid in asteroids:
-                if(asteroid is None): continue
-                dist = ship.position.distance(asteroid.position)
-                if(asteroid.type == AsteroidType.FUEL_ASTEROID and dist<bestdist):
-                    bestdist = dist
-                    best = asteroid
-            if(best is not None):
-                if(bestdist<50): self.log('brakae') ; turns.append(MoveTurn(ship.id,Brake(ship)))
-                turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
-                pass
+            if(self.job[ship.id] is None):
+                turns.append(SiphonTurn(mothership.id,ship.id,min(mothership.fuel,50)))
+                Assign2(self,ship,asteroids)
+            else:
+                if(self.job[ship.id]==mothership.id or asteroids[self.job[ship.id]] is None):
+                    self.job[ship.id]=mothership.id
+                    dist = ship.position.distance(mothership.position)
+                    if(dist < 20):
+                        self.log(f"siphonujem {ship.id} potom {mothership.id} potom {ship.fuel} potom {dist}")
+                        turns.append(SiphonTurn(ship.id,mothership.id,int(ship.fuel)))
+                        self.job[ship.id]=None
+                    else:
+                        turns.append(MoveTurn(ship.id,Adjust2(ship,mothership)))
+                else:
+                    if(ship.position.distance(asteroids[self.job[ship.id]].position)<50): turns.append(MoveTurn(ship.id,Brake(ship)))
+                    else: turns.append(MoveTurn(ship.id,Adjust2(ship,asteroids[self.job[ship.id]])))
+
+
+        elif(ship.type == ShipType.BATTLE_SHIP):
+            pass
         elif(ship.type == ShipType.MOTHER_SHIP):
             pass
     return turns

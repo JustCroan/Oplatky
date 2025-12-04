@@ -40,12 +40,12 @@ class MyClient(Client):
         self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
-        res=BuyShips(self,cur_rock,cur_fuel,cur_ships_types)
+        res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
 
-        turns+=OperateShips(self,my_ships,asteroids,ships,mothership)
+        turns+=OperateShips2(self,my_ships,asteroids,ships,mothership)
 
         self.log(turns)
 
