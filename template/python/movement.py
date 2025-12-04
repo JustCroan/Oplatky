@@ -53,7 +53,7 @@ def Adjust2(ship: Ship, target: Asteroid | Ship | Position, fuelplan=1):
         else:
             return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1)))
     else:
-        return Normalize_Fuel(ship, target.sub(ship.position).sub(ship.vector))
+        return Normalize_Fuel(ship, goalpos.sub(ship.position).sub(ship.vector))
 
     
 def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):

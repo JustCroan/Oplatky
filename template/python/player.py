@@ -27,6 +27,7 @@ class MyClient(Client):
     speedup = defaultdict(lambda : False)
     fuelplan = defaultdict(lambda : None)
     mothershipinuse = False
+    premothership = Position(0,0)
     def turn(self) -> List[Turn]:
 
         self.mothershipinuse = False
@@ -48,7 +49,7 @@ class MyClient(Client):
 
         if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
         else: res=BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types)
-
+        
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
