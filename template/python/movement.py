@@ -49,9 +49,9 @@ def Adjust2(ship: Ship, target: Asteroid | Ship | Position, fuelplan=1):
     a = Fast(ship)
     if not Is_overshooting(ship, target):
         if (v-fuelplan)/a*(v+fuelplan)/2 > d:
-            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-1)))
+            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v-a)))
         else:
-            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+1)))
+            return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v+a)))
     else:
         return Normalize_Fuel(ship, goalpos.sub(ship.position).sub(ship.vector))
 

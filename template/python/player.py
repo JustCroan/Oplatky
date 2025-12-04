@@ -34,6 +34,7 @@ class MyClient(Client):
         player = self.get_my_player()
         my_ships = self.get_my_ships()
         mothership = self.get_my_mothership()
+        self.premothership = mothership.position
         ships = self.game_map.ships
         asteroids = self.game_map.asteroids
         cur_ships_types = [my_ships[i].type for i in range(len(my_ships))]
@@ -49,7 +50,7 @@ class MyClient(Client):
 
         if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
         else: res=BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types)
-        
+
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
