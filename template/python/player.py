@@ -26,8 +26,10 @@ class MyClient(Client):
     takenby = defaultdict(lambda : None)
     speedup = defaultdict(lambda : False)
     fuelplan = defaultdict(lambda : None)
+    mothershipinuse = False
     def turn(self) -> List[Turn]:
 
+        self.mothershipinuse = False
         player = self.get_my_player()
         my_ships = self.get_my_ships()
         mothership = self.get_my_mothership()
@@ -38,6 +40,8 @@ class MyClient(Client):
         cur_rock = player.rock
         cur_fuel = player.fuel
         turns: List[Turn] = []
+        siphoningfuel = defaultdict(lambda:0)
+        
 
         #self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
@@ -49,7 +53,7 @@ class MyClient(Client):
         cur_rock=res[1]
         cur_fuel=res[2]
 
-        turns+=OperateShips2(self,my_ships,asteroids,ships,mothership)
+        turns+=OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel)
 
 
 

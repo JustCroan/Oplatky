@@ -15,7 +15,7 @@ def Normalize_Fuel(ship: Ship, vector: Position):
     if ship.fuel >= vector.size() - Fast(ship):
         return vector
     else:
-        return vector.normalize().scale(max(0, ship.fuel - Fast(ship) - 0,1))
+        return vector.normalize().scale(max(1, ship.fuel + Fast(ship) - 0,1))
 
 #Flight adjuster for asteroid
 '''
@@ -78,11 +78,13 @@ def Begin_Route(ship: Ship, target: Asteroid | Ship | Position, time_target: int
     k = max(1, (4*dist - time_target**2)/(2*time_target)-5)
     return dir.scale(k)
 
-def Begin_Fuel_Route(ship: Ship, target: Asteroid | Ship, fuel_target: float):
+def Begin_Fuel_Route(ship: Ship, target: Asteroid | Ship | Position, fuel_target: float):
+    goalpos = target
+    if(not isinstance(target, Position)): goalpos=target.position
     v = ship.vector.size()
-    d = ship.position.distance(target.position)
+    d = ship.position.distance(goalpos)
     a = Fast(ship)
-    return Normalize_Fuel(ship, ship.vector.scale(-1).add(target.position.sub(ship.position).normalize().scale(v + fuel_target)))
+    return Normalize_Fuel(ship, ship.vector.scale(-1).add(goalpos.sub(ship.position).normalize().scale(v + fuel_target)))
 
 def Brake(ship: Ship):
     return ship.vector.scale(-1)
