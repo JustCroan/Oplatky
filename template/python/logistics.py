@@ -63,39 +63,69 @@ def Assign(self,ship,mothership,my_ships):
 
 def Assign2(self,ship,mothership,my_ships,asteroids):
     if(ship.type == ShipType.DRILL_SHIP):
-            if(ship.rock>0):
-                self.job[ship.id]=mothership.id
-                return mothership.id
-            else:
-                bestdist = float('inf')
-                best = None
-                for asteroid in asteroids:
-                    if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None):
-                        if ship.position(asteroid.position)<bestdist:
-                            bestdist = ship.position(asteroid.position)
-                            best=asteroid
-                if(best is not None):
-                    self.job[ship.id]=best.id
-                    self.takenby[best.id]=ship.id
-                    return best.id
+        bestdist = float('inf')
+        best = None
+        for asteroid in asteroids:
+            if(asteroid.type==AsteroidType.ROCK_ASTEROID and self.takenby[asteroid.id] is None):
+                if ship.position(asteroid.position)<bestdist:
+                    bestdist = ship.position(asteroid.position)
+                    best=asteroid
+        if(best is not None):
+            self.job[ship.id]=best.id
+            self.takenby[best.id]=ship.id
+            return best.id
     elif(ship.type == ShipType.SUCKER_SHIP):
-        if(ship.rock>0):
-            self.job[ship.id]=mothership.id
-            return mothership.id
-        else:
-            bestdist = float('inf')
-            best = None
-            for asteroid in asteroids:
-                if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None):
-                    if ship.position(asteroid.position)<bestdist:
-                        bestdist = ship.position(asteroid.position)
-                        best=asteroid
-            if(best is not None):
-                self.job[ship.id]=best.id
-                self.takenby[best.id]=ship.id
-                return best.id
+        bestdist = float('inf')
+        best = None
+        for asteroid in asteroids:
+            if(asteroid.type==AsteroidType.FUEL_ASTEROID and self.takenby[asteroid.id] is None):
+                if ship.position(asteroid.position)<bestdist:
+                    bestdist = ship.position(asteroid.position)
+                    best=asteroid
+        if(best is not None):
+            self.job[ship.id]=best.id
+            self.takenby[best.id]=ship.id
+            return best.id
     return None
 
+def OperateShips2(self,my_ships,asteroids,ships,mothership):
+    turns = []
+
+
+
+    for ship in my_ships:
+        if(ship.type == ShipType.DRILL_SHIP):
+            best = None
+            bestdist = float('inf')
+            for asteroid in asteroids:
+                if(asteroid is None): continue
+                dist = ship.position.distance(asteroid.position)
+                if(asteroid.type == AsteroidType.ROCK_ASTEROID and dist<bestdist):
+                    bestdist = dist
+                    best = asteroid
+            if(best is not None):
+                if(bestdist<50): turns.append(MoveTurn(ship.id,Brake(ship)))
+                else: turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
+
+
+
+
+        elif(ship.type == ShipType.SUCKER_SHIP):
+            best = None
+            bestdist = float('inf')
+            for asteroid in asteroids:
+                if(asteroid is None): continue
+                dist = ship.position.distance(asteroid.position)
+                if(asteroid.type == AsteroidType.FUEL_ASTEROID and dist<bestdist):
+                    bestdist = dist
+                    best = asteroid
+            if(best is not None):
+                if(bestdist<50): self.log('brakae') ; turns.append(MoveTurn(ship.id,Brake(ship)))
+                turns.append(MoveTurn(ship.id,Ultra_Adjust(ship,best)))
+                pass
+        elif(ship.type == ShipType.MOTHER_SHIP):
+            pass
+    return turns
 def OperateShips(self,my_ships,asteroids,ships,mothership):
     presun = defaultdict(lambda:0)
     turns = []
