@@ -42,9 +42,9 @@ class MyClient(Client):
         self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
-        if (round<1000): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
+        if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
         else: res=BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types)
-        
+
         turns+=res[0]
         cur_rock=res[1]
         cur_fuel=res[2]
@@ -54,7 +54,6 @@ class MyClient(Client):
 
 
         self.log(turns)
-        turns.append(MoveTurn(mothership.id,mothership.vector))
         return turns    
 
 if __name__ == "__main__":

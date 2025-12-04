@@ -12,5 +12,11 @@ def Centralize(ship: Ship, bulharska: float):
     else:
         return MoveTurn(ship.id, Position(0, 0).sub(ship.position).normalize().scale(a))
 
-
+def Constant_Centralize(ship: Ship, bulharska: float):
+    d = ship.position.size()
+    if 2*bulharska < d and ship.vector.size() > bulharska - 0.01:
+        return MoveTurn(ship.id, Position(0,0))
+    elif ship.vector.size() == 0: return MoveTurn(ship.id, Position(0,0).sub(ship.position).normalize().scale(bulharska))
+    else:
+        return MoveTurn(ship.id, ship.vector.scale(-1))
 
