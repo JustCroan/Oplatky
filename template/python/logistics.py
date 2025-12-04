@@ -16,10 +16,10 @@ def BuyShips(self,cur_rock,cur_fuel,cur_ships_types):
         cur_fuel-=100
     return [turns,cur_rock,cur_fuel]
 
-def BuyShips2(self,cur_rock,cur_fuel,cur_ships_types):
+def BuyShips2(self,cur_rock,cur_fuel,cur_ships_types,executeorder66):
     turns = []
     while(True):
-        ship_to_buy = ShipToBuy2(self,cur_rock,cur_fuel,cur_ships_types)
+        ship_to_buy = ShipToBuy2(self,cur_rock,cur_fuel,cur_ships_types,executeorder66)
         if(ship_to_buy is None): break 
         turns.append(BuyTurn(ship_to_buy))
         self.log(f"Buying {ship_to_buy}")

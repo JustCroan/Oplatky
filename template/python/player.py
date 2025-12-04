@@ -48,8 +48,9 @@ class MyClient(Client):
         #self.log(f"My ships: {(my_ships)}")
         CheckAssignments(self,ships)
 
-        if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
-        else: res=BuyShipsConquer(self,cur_rock,cur_fuel,cur_ships_types)
+        #if (round<1200): res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types)
+        executeorder66 = 800
+        res=BuyShips2(self,cur_rock,cur_fuel,cur_ships_types,executeorder66)
 
         turns+=res[0]
         cur_rock=res[1]
