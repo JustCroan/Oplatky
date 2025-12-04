@@ -253,7 +253,7 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                         turns.append(MoveTurn(ship.id,Adjust2(ship,goal)))
         elif(ship.type == ShipType.MOTHER_SHIP):
             self.log(f"rounder {self.game_map.round}")
-            if(self.game_map.round in Mothership_Movement_Precal):
+            if(self.game_map.round in [500,1000,1500]):
                 self.log(f"assignujem mothershipke {AssignMothership(self,mothership,asteroids,my_ships)}")
             if self.job[ship.id] is not None:
                 if(not self.mothershipinuse) and self.game_map.round >= Mothership_Movement[index]:
