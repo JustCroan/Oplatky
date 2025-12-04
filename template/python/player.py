@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/bin/python3
 import math
 from collections import defaultdict
 from typing import List
@@ -18,9 +18,6 @@ from proboj import (
 from movement import *
 from eval import *
 from logistics import *
-
-# def dist(a : Position,b : Position):
-#     return math.sqrt((a.x-b.x)**2+(a.y-b.y)**2) 
 
 class MyClient(Client):
     assignedto = defaultdict(lambda : None)
@@ -48,8 +45,9 @@ class MyClient(Client):
 
         turns+=OperateShips(self,my_ships,asteroids,ships,mothership)
 
+        self.log(turns)
 
-        return turns
+        return turns    
 
 if __name__ == "__main__":
     client = MyClient()
