@@ -49,13 +49,8 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
         else:
             return vects[1]
     except:
-        v = ship.vector.size()
-        d = ship.position.distance(target.position)
-        a = Fast(ship)
-        if v/a*(v+1)/2 > d:
-            return ship.vector.normalize().scale(-1).scale(a)
-        else:
-            return target.position.sub(ship.position).normalize().scale(a)
+        v_dot = dif.normalize().scale(Dot_Product_Normalized(ve, dif)*ve.size())
+        return v_dot.sub(ve).normalize()
 
 #Begin Movement to target with some target time    
 def Begin_Route(ship: Ship, target: Asteroid | Ship, time_target: int):
