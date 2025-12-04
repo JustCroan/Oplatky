@@ -39,7 +39,7 @@ def Ultra_Adjust(ship: Ship, target: Asteroid | Ship):
         koef1 = ( 2*do + ( sds**2 - 4*sds*sdt )**0.5 )/sdt
         koef2 = ( 2*do - ( sds**2 - 4*sds*sdt )**0.5 )/sdt
 
-        vects = sorted([dif.normalize().scale(koef1), dif.normalize().scale(koef2)], key= lambda x: x.size())
+        vects = sorted([dif.scale(koef1), dif.scale(koef2)], key= lambda x: x.size())
 
         v = ship.vector.size()
         d = ship.position.distance(target.position)
