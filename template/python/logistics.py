@@ -129,6 +129,8 @@ def Assign2(self,ship,asteroids,siphoningfuel):
     return None
 
 def AssignMothership(self,mothership,asteroids,my_ships):
+    global index
+    index += 1
     best = None
     bestdist = float('inf')
     for asteroid in asteroids:
@@ -153,10 +155,9 @@ def AssignMothership(self,mothership,asteroids,my_ships):
 
 Mothership_Movement = [500,750,1000,1200,1500,1800]
 Mothership_Movement_Precal = [i-150 for i in Mothership_Movement]
-index = 0
+index = -1
 
 def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
-    global index
     turns = []
     fuelintake = 100
     fuelintake = int(max(mothership.fuel//(1.5*(len(my_ships))),fuelintake))
@@ -262,7 +263,6 @@ def OperateShips2(self,my_ships,asteroids,ships,mothership,siphoningfuel):
                     else:
                         turns.append(DecideMove(self,mothership,self.job[ship.id]))
                     self.mothershipinuse=True
-                    index += 1
     return turns
 def OperateShips(self,my_ships,asteroids,ships,mothership):
     presun = defaultdict(lambda:0)
